@@ -76,6 +76,74 @@ def hist_from_data(movies_df, data_arr, plot_fig=True, save_fig=False, title='')
         plt.savefig(title)
     return labels, freq
 
+def get_genre_ids(movies_df, genre, n=-1):
+    '''Gets the first n movie ids of the given genre
+    
+    Inputs:
+        movies_df: pandas dataframe with movie informations, including
+        title, average rating, and genre information.
+        
+        genre: the genre to retrieve the ids for
+        
+        n: the number of ids to retrieve
+        
+    Output:
+        a numpy array of integers corresponding to the id of the movies
+    '''
+    return movies_df[movies_df[genre]==1]['Movie Id'][:n]
+
+
+def plot_proj(proj, movies_df, movie_ids, id_label=None, label_pts=True, suppress=False, box_color='yellow', size=(10, 10)):
+    '''
+    Plots the movies given by the ids on the 2D projection
+    
+    Inputs:
+        proj: the 2D projection of the factorized "V" matrix. 
+        
+        movies_df: pandas dataframe with movie informations, including
+        title, average rating, and genre information.
+        
+        movie_ids: numpy array of integers corresponding to the movies to plot.
+        
+        id_label: the label of the points in the legend. Relevant for multiple 
+        datasets. (default = None)
+        
+        label_pts: boolean of whether to label plotted point with movie titles
+        (default = True)
+        
+        suppress: boolean of whether to initialize and display the plot. To 
+        plot multiple plots on the same figure, let suppress=True. (default = False)
+        
+        box_color: color of shading of the labels (default = yellow)
+        
+        size: size of the plot
+        
+    Outputs:
+        None.
+    '''
+    if suppress == False:
+        plt.figure(figsize=size)
+    
+    mask = np.zeros(len(proj[0]), dtype=bool)
+    mask[movie_ids-1] = True
+    
+    x = proj[0][mask]
+    y = proj[1][mask]
+    
+    plt.scatter(x, y, label=id_label)
+    if label_pts == True:
+        labels = [get_title_from_id(movies, movie_id) for movie_id in movie_ids]
+        for label, x1, y1 in zip(labels, x, y):
+            plt.annotate(
+                label,
+                xy=(x1, y1), xytext=(-5, 5),
+                textcoords='offset points', ha='right', va='bottom'
+                ,bbox=dict(boxstyle='round,pad=0.5', fc=box_color, alpha=0.5)
+                #,arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
+            )
+    plt.axis('equal')
+    if suppress == False:
+        plt.show()
 
 if __name__ == "__main__":
     data = np.loadtxt('data/data.txt', dtype=int)
@@ -111,6 +179,8 @@ if __name__ == "__main__":
         movie_data = data_from_ids(movies, ids, data)
         movie_title = genre+' Movies'
         hist_from_data(movies, movie_data, title=movie_title)
+        
+        
 
 
 
