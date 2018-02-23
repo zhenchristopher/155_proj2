@@ -88,12 +88,13 @@ def get_genre_ids(movies_df, genre, n=-1):
         
         genre: the genre to retrieve the ids for
         
-        n: the number of ids to retrieve
+        n: the number of ids to retrieve. Sorted by number of ratings
         
     Output:
         a numpy array of integers corresponding to the id of the movies
     '''
-    return movies_df[movies_df[genre]==1]['Movie Id'][:n]
+    genre_df = movies_df[movies_df[genre]==1]
+    return genre_df.sort_values('Num', ascending=False)[:n]['Movie Id']
 
 
 def plot_proj(proj, movies_df, movie_ids, id_label=None, label_pts=True, suppress=False, box_color='yellow', size=(10, 10)):
