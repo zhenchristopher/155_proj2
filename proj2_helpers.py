@@ -12,6 +12,9 @@ def get_avg_rating(movies_df, data_arr):
         avg[movie_id-1] = (np.mean(data_arr[:,2][inds]))
     movies_df['Avg'] = avg
 
+def get_num_rating(movies_df, data_arr):
+    movies_df['Num'] = np.bincount(data_arr[:,1])[1:]
+    
 def get_title_from_id(movies, movie_id):
     '''Returns the movie title corresponding to the movie id'''
     return movies.iloc[movie_id-1]['Movie Title']
